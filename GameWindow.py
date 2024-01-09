@@ -33,16 +33,25 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Dino(pygame.sprite.Sprite):
-    image = load_image('dino.png')
+    frames = [load_image('dino_right_up.png'),
+              load_image('dino_left_up.png')]
 
     def __init__(self, *groups):
         super(Dino, self).__init__(*groups)
-        self.image = Dino.image
+        self.image = self.frames[0]
+        self.cur_frame = 0
+        # Frame change counter for animation speed task
+        self.frame_counter = 0
+
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 100, 367
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        pass
+        self.frame_counter += 1
+        if self.frame_counter == 3:
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.image = self.frames[self.cur_frame]
+            self.frame_counter = 0
 
 
 if __name__ == '__main__':
