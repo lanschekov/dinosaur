@@ -1,9 +1,11 @@
+import random
 from typing import Any
 
 import pygame
-from system import SIZE, WIDTH, HEIGHT, FPS
+
+from system import CACTUS_APPEARANCE_EVENT, update_cactus_event
+from system import SIZE, WIDTH, FPS
 from system import load_image
-import random
 
 # load_image() requires pygame and screen initialization
 pygame.init()
@@ -32,6 +34,23 @@ class Tile(pygame.sprite.Sprite):
             self.kill()
 
 
+class Cactus(pygame.sprite.Sprite):
+    images = [load_image('cactus.png')]
+    dx = -10
+
+    def __init__(self, *groups):
+        super(Cactus, self).__init__(*groups)
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = WIDTH, 385
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.rect = self.rect.move(self.dx, 0)
+        # If the cactus is no longer visible
+        if self.rect.right < 0:
+            self.kill()
+
+
 class Dino(pygame.sprite.Sprite):
     frames = [load_image('dino_right_up.png'),
               load_image('dino_left_up.png')]
@@ -47,6 +66,7 @@ class Dino(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = 100, 367
 
     def update(self, *args: Any, **kwargs: Any) -> None:
+        # Animation
         self.frame_counter += 1
         if self.frame_counter == 3:
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -68,6 +88,7 @@ if __name__ == '__main__':
     Tile(0, tile_group, all_sprites)
     Tile(WIDTH // 2, tile_group, all_sprites)
 
+    update_cactus_event()
     dino = Dino(dino_group, all_sprites)
 
     running = True
@@ -76,10 +97,17 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
 
+            if event.type == CACTUS_APPEARANCE_EVENT:
+                Cactus(cactus_group, all_sprites)
+                update_cactus_event()
+
         screen.blit(bg_image, (0, 0))
 
         tile_group.update()
         tile_group.draw(screen)
+
+        cactus_group.update()
+        cactus_group.draw(screen)
 
         dino_group.update()
         dino_group.draw(screen)
