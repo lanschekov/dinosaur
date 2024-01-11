@@ -52,26 +52,69 @@ class Cactus(pygame.sprite.Sprite):
 
 
 class Dino(pygame.sprite.Sprite):
-    frames = [load_image('dino_right_up.png'),
+    FRAMES = [load_image('dino_right_up.png'),
               load_image('dino_left_up.png')]
+
+    START_X, START_Y = 100, 367
+
+    JUMP_HEIGHT = 200
+    JUMP_SPEED = 30
+    MIN_JUMP_SPEED = 10
+    GRAVITY = 2
 
     def __init__(self, *groups):
         super(Dino, self).__init__(*groups)
-        self.image = self.frames[0]
+        self.image = self.FRAMES[0]
         self.cur_frame = 0
         # Frame change counter for animation speed task
         self.frame_counter = 0
 
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = 100, 367
+        self.rect.x, self.rect.y = self.START_X, self.START_Y
+
+        self.dy = self.JUMP_SPEED
+        self.is_going_up = False
+        self.is_going_down = False
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         # Animation
         self.frame_counter += 1
         if self.frame_counter == 3:
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
+            self.cur_frame = (self.cur_frame + 1) % len(self.FRAMES)
+            self.image = self.FRAMES[self.cur_frame]
             self.frame_counter = 0
+
+        # Probable jump
+        if self.is_going_up:
+            self.go_up()
+        elif self.is_going_down:
+            self.go_down()
+
+    def go_down(self) -> None:
+        # Increase Y coordinate
+        self.dy += self.GRAVITY
+        self.rect.y += self.dy
+
+        if self.rect.y > self.START_Y:
+            self.rect.y = self.START_Y
+            self.is_going_down = False
+            self.dy = self.JUMP_SPEED
+
+    def go_up(self) -> None:
+        # Decrease Y coordinate
+        self.dy -= self.GRAVITY
+        if self.dy < self.MIN_JUMP_SPEED:
+            self.dy = self.MIN_JUMP_SPEED
+        self.rect.y -= self.dy
+
+        if self.rect.y < self.START_Y - self.JUMP_HEIGHT:
+            self.rect.y = self.START_Y - self.JUMP_HEIGHT
+            self.is_going_up = False
+            self.is_going_down = True
+
+    def start_jumping(self) -> None:
+        if not self.is_going_up and not self.is_going_down:
+            self.is_going_up = True
 
 
 if __name__ == '__main__':
@@ -100,6 +143,9 @@ if __name__ == '__main__':
             if event.type == CACTUS_APPEARANCE_EVENT:
                 Cactus(cactus_group, all_sprites)
                 update_cactus_event()
+
+            if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
+                dino.start_jumping()
 
         screen.blit(bg_image, (0, 0))
 
