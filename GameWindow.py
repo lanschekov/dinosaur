@@ -26,8 +26,8 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.dx, 0)
 
         # If there is an empty space on the right that needs to be filled with tiles
-        if self.rect.x < 0 and len(tile_group) == 2:
-            Tile(WIDTH + self.rect.x, tile_group, all_sprites)
+        if self.rect.x < 0 and len(game.tile_group) == 2:
+            Tile(WIDTH + self.rect.x, game.tile_group, game.all_sprites)
 
         # If the tile is no longer visible
         if self.rect.right < 0:
@@ -117,48 +117,58 @@ class Dino(pygame.sprite.Sprite):
             self.is_going_up = True
 
 
+class Game:
+    def __init__(self):
+        self.is_playing = False
+        self.bg_image = load_image('game_bg.png')
+        self.clock = pygame.time.Clock()
+
+        # Sprite groups
+        self.all_sprites = pygame.sprite.Group()
+        self.dino_group = pygame.sprite.Group()
+        self.tile_group = pygame.sprite.Group()
+        self.cactus_group = pygame.sprite.Group()
+
+        # Initial tiles
+        Tile(0, self.tile_group, self.all_sprites)
+        Tile(WIDTH // 2, self.tile_group, self.all_sprites)
+
+        self.dino = Dino(self.dino_group, self.all_sprites)
+
+    def start(self):
+        self.is_playing = True
+        update_cactus_event()
+
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+                if event.type == CACTUS_APPEARANCE_EVENT:
+                    Cactus(self.cactus_group, self.all_sprites)
+                    update_cactus_event()
+
+                if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
+                    self.dino.start_jumping()
+
+            screen.blit(self.bg_image, (0, 0))
+
+            self.tile_group.update()
+            self.tile_group.draw(screen)
+
+            self.cactus_group.update()
+            self.cactus_group.draw(screen)
+
+            self.dino_group.update()
+            self.dino_group.draw(screen)
+
+            pygame.display.flip()
+            self.clock.tick(FPS)
+
+        pygame.quit()
+
+
 if __name__ == '__main__':
-    bg_image = load_image('game_bg.png')
-    clock = pygame.time.Clock()
-
-    # Sprite groups
-    all_sprites = pygame.sprite.Group()
-    dino_group = pygame.sprite.Group()
-    tile_group = pygame.sprite.Group()
-    cactus_group = pygame.sprite.Group()
-
-    # Initial tiles
-    Tile(0, tile_group, all_sprites)
-    Tile(WIDTH // 2, tile_group, all_sprites)
-
-    update_cactus_event()
-    dino = Dino(dino_group, all_sprites)
-
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-            if event.type == CACTUS_APPEARANCE_EVENT:
-                Cactus(cactus_group, all_sprites)
-                update_cactus_event()
-
-            if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
-                dino.start_jumping()
-
-        screen.blit(bg_image, (0, 0))
-
-        tile_group.update()
-        tile_group.draw(screen)
-
-        cactus_group.update()
-        cactus_group.draw(screen)
-
-        dino_group.update()
-        dino_group.draw(screen)
-
-        pygame.display.flip()
-        clock.tick(FPS)
-
-    pygame.quit()
+    game = Game()
+    game.start()
