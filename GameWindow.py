@@ -43,6 +43,7 @@ class Cactus(pygame.sprite.Sprite):
         self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = WIDTH, 385
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect = self.rect.move(self.dx, 0)
@@ -72,6 +73,8 @@ class Dino(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.START_X, self.START_Y
 
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.dy = self.JUMP_SPEED
         self.is_going_up = False
         self.is_going_down = False
@@ -80,8 +83,7 @@ class Dino(pygame.sprite.Sprite):
         # Animation
         self.frame_counter += 1
         if self.frame_counter == 3:
-            self.cur_frame = (self.cur_frame + 1) % len(self.FRAMES)
-            self.image = self.FRAMES[self.cur_frame]
+            self.animate()
             self.frame_counter = 0
 
         # Probable jump
@@ -91,8 +93,13 @@ class Dino(pygame.sprite.Sprite):
             self.go_down()
 
         # Collision with a cactus
-        if pygame.sprite.spritecollideany(self, game.cactus_group):
+        if pygame.sprite.spritecollideany(self, game.cactus_group, pygame.sprite.collide_mask):
             game.stop()
+
+    def animate(self):
+        self.cur_frame = (self.cur_frame + 1) % len(self.FRAMES)
+        self.image = self.FRAMES[self.cur_frame]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def go_down(self) -> None:
         # Increase Y coordinate
@@ -170,8 +177,14 @@ class Game:
     def update(self) -> None:
         screen.blit(self.bg_image, (0, 0))
 
-        self.all_sprites.update()
-        self.all_sprites.draw(screen)
+        self.tile_group.update()
+        self.tile_group.draw(screen)
+
+        self.cactus_group.update()
+        self.cactus_group.draw(screen)
+
+        self.dino_group.update()
+        self.dino_group.draw(screen)
 
         pygame.display.flip()
         self.clock.tick(FPS)
