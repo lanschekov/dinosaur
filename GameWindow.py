@@ -90,6 +90,10 @@ class Dino(pygame.sprite.Sprite):
         elif self.is_going_down:
             self.go_down()
 
+        # Collision with a cactus
+        if pygame.sprite.spritecollideany(self, game.cactus_group):
+            game.stop()
+
     def go_down(self) -> None:
         # Increase Y coordinate
         self.dy += self.GRAVITY
@@ -152,21 +156,25 @@ class Game:
                 if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
                     self.dino.start_jumping()
 
-            screen.blit(self.bg_image, (0, 0))
+            if self.is_playing:
+                screen.blit(self.bg_image, (0, 0))
 
-            self.tile_group.update()
-            self.tile_group.draw(screen)
+                self.tile_group.update()
+                self.tile_group.draw(screen)
 
-            self.cactus_group.update()
-            self.cactus_group.draw(screen)
+                self.cactus_group.update()
+                self.cactus_group.draw(screen)
 
-            self.dino_group.update()
-            self.dino_group.draw(screen)
+                self.dino_group.update()
+                self.dino_group.draw(screen)
 
-            pygame.display.flip()
-            self.clock.tick(FPS)
+                pygame.display.flip()
+                self.clock.tick(FPS)
 
         pygame.quit()
+
+    def stop(self):
+        self.is_playing = False
 
 
 if __name__ == '__main__':
