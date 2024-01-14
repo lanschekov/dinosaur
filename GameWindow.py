@@ -4,6 +4,7 @@ import sys
 from typing import Any
 
 import pygame
+import pygame_gui
 
 from system import CACTUS_APPEARANCE_EVENT, update_cactus_event
 from system import SIZE, WIDTH, FPS
@@ -146,10 +147,13 @@ class Game:
         self.tile_group = pygame.sprite.Group()
         self.cactus_group = pygame.sprite.Group()
 
-        self.is_playing = None
+        self.is_playing = False
         self.dino = None
 
-    def start(self):
+        self.ui_manager = None
+        self.start_btn = None
+
+    def show(self):
         self.initialize()
         running = True
         while running:
@@ -162,8 +166,21 @@ class Game:
                 else:
                     self.handle_stop_event(event)
 
+                self.ui_manager.process_events(event)
+
+            self.screen.blit(self.bg_image, (0, 0))
+
             if self.is_playing:
                 self.update()
+
+            self.tile_group.draw(self.screen)
+            self.cactus_group.draw(self.screen)
+            self.dino_group.draw(self.screen)
+
+            self.ui_manager.update(self.clock.tick(FPS) / 1000.0)
+            self.ui_manager.draw_ui(self.screen)
+
+            pygame.display.flip()
 
         pygame.quit()
 
@@ -176,30 +193,29 @@ class Game:
             self.dino.start_jumping()
 
     def handle_stop_event(self, event) -> None:
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.start_btn:
+                self.restart()
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             self.restart()
 
     def update(self) -> None:
-        self.screen.blit(self.bg_image, (0, 0))
-
         self.tile_group.update()
-        self.tile_group.draw(self.screen)
-
         self.cactus_group.update()
-        self.cactus_group.draw(self.screen)
-
         self.dino_group.update()
-        self.dino_group.draw(self.screen)
-
-        pygame.display.flip()
-        self.clock.tick(FPS)
 
     def stop(self) -> None:
         self.is_playing = False
 
+    def start(self) -> None:
+        self.is_playing = True
+        update_cactus_event()
+
     def restart(self) -> None:
         self.clear()
         self.initialize()
+        self.start()
 
     def clear(self) -> None:
         for cactus in self.cactus_group:
@@ -215,8 +231,12 @@ class Game:
 
         self.dino = Dino(self, self.dino_group, self.all_sprites)
 
-        self.is_playing = True
-        update_cactus_event()
+        self.ui_manager = pygame_gui.UIManager(SIZE)
+
+        self.start_btn = pygame_gui.elements.UIButton(
+            pygame.Rect((378, 180), (243, 39)),
+            'Начать', manager=self.ui_manager
+        )
 
     def load_image(self, name, colorkey=None):
         fullname = 'data/' + name

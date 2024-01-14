@@ -22,4 +22,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.level_3.mousePressEvent = lambda event: self.start_level()
 
     def start_level(self):
-        Game().start()
+        Game().show()
