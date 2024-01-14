@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1000</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Homepage</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="background">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1000</width>
+      <height>650</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/game_bg.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="app_name">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>36</y>
+      <width>576</width>
+      <height>39</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>45</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #E8E5E5;
+</string>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/app_name.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="level_label">
+    <property name="geometry">
+     <rect>
+      <x>419</x>
+      <y>186</y>
+      <width>160</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #E8E5E5;</string>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/levels_label.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="level_1">
+    <property name="geometry">
+     <rect>
+      <x>51</x>
+      <y>250</y>
+      <width>279</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/level_1.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="level_2">
+    <property name="geometry">
+     <rect>
+      <x>363</x>
+      <y>250</y>
+      <width>279</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/level_2.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="level_3">
+    <property name="geometry">
+     <rect>
+      <x>675</x>
+      <y>250</y>
+      <width>279</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../../data/level_3.png</pixmap>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
