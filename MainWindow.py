@@ -1,5 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow
+
+from GameWindow import Game
 from design.py.main_window_design import Ui_MainWindow
 
 
@@ -15,3 +17,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.level_2.setPixmap(QtGui.QPixmap('data/level_2.png'))
         self.level_3.setPixmap(QtGui.QPixmap('data/level_3.png'))
 
+        self.level_1.mousePressEvent = lambda event: self.start_level()
+        self.level_2.mousePressEvent = lambda event: self.start_level()
+        self.level_3.mousePressEvent = lambda event: self.start_level()
+
+    def start_level(self):
+        Game().start()
