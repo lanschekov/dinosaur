@@ -152,7 +152,10 @@ class Game:
         self.dino = None
 
         self.ui_manager = None
+        self.message = None
         self.start_btn = None
+        self.pause_btn = None
+        self.stop_btn = None
 
     def show(self):
         self.initialize()
@@ -234,10 +237,41 @@ class Game:
 
         self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_window_theme.json')
 
+        # App name (logo)
+        pygame_gui.elements.UITextBox(
+            "CYBER<br>DINO",
+            pygame.Rect((860, 10), (140, 75)),
+            manager=self.ui_manager,
+            object_id=ObjectID(object_id='#app_name', class_id='@big_text')
+        )
+
+        # Message (at the beginning)
+        self.message = pygame_gui.elements.UILabel(
+            pygame.Rect((345, 30), (310, 40)),
+            text="LET'S GO",
+            manager=self.ui_manager,
+            object_id=ObjectID(object_id='#message', class_id='@big_text')
+        )
+
+        # Start button
         self.start_btn = pygame_gui.elements.UIButton(
-            pygame.Rect((378, 180), (243, 45)),
+            pygame.Rect((378, 120), (243, 45)),
             'Начать', manager=self.ui_manager,
             object_id=ObjectID(object_id='#start_btn', class_id='@game_btn')
+        )
+
+        # Pause button
+        self.pause_btn = pygame_gui.elements.UIButton(
+            pygame.Rect((378, 180), (243, 45)),
+            'Пауза', manager=self.ui_manager,
+            object_id=ObjectID(object_id='#pause_btn', class_id='@game_btn')
+        )
+
+        # Stop button
+        self.stop_btn = pygame_gui.elements.UIButton(
+            pygame.Rect((378, 240), (243, 45)),
+            'Завершить', manager=self.ui_manager,
+            object_id=ObjectID(object_id='#stop_btn', class_id='@game_btn')
         )
 
     def load_image(self, name, colorkey=None):
