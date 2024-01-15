@@ -1,0 +1,40 @@
+{
+    "#start_btn": {
+        "colours": {
+            "normal_bg": "rgba(0, 0, 0, 0)",
+            "hovered_bg": "rgba(0, 0, 0, 0)",
+            "disabled_bg": "rgba(0, 0, 0, 0)",
+            "selected_bg": "rgba(0, 0, 0, 0)",
+            "active_bg": "rgba(0, 0, 0, 0)",
+            "normal_text": "#E8E5E5",
+            "hovered_text": "#E8E5E5",
+            "selected_text": "#E8E5E5",
+            "disabled_text": "#E8E5E5",
+            "active_text": "#9AE1FF",
+            "normal_border": "#E8E5E5",
+            "hovered_border": "#9AE1FF",
+            "disabled_border": "#E8E5E5",
+            "selected_border": "#E8E5E5",
+            "active_border": "#9AE1FF",
+            "normal_text_shadow": "rgba(0, 0, 0, 0)",
+            "hovered_text_shadow": "rgba(0, 0, 0, 0)",
+            "disabled_text_shadow": "rgba(0, 0, 0, 0)",
+            "selected_text_shadow": "rgba(0, 0, 0, 0)",
+            "active_text_shadow": "rgba(0, 0, 0, 0)"
+        },
+        "font": {
+            "name": "PressStart2P",
+            "size": 15,
+            "regular_path": "data/PressStart2P-Regular.ttf"
+        },
+        "misc": {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "17",
+            "border_width": "3",
+            "state_transitions": {
+                "normal_hovered": "0.2",
+                "hovered_normal": "0.1"
+            }
+        }
+    }
+}

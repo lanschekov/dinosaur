@@ -5,6 +5,7 @@ from typing import Any
 
 import pygame
 import pygame_gui
+from pygame_gui.core import ObjectID
 
 from system import CACTUS_APPEARANCE_EVENT, update_cactus_event
 from system import SIZE, WIDTH, FPS
@@ -231,11 +232,12 @@ class Game:
 
         self.dino = Dino(self, self.dino_group, self.all_sprites)
 
-        self.ui_manager = pygame_gui.UIManager(SIZE)
+        self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_window_theme.json')
 
         self.start_btn = pygame_gui.elements.UIButton(
-            pygame.Rect((378, 180), (243, 39)),
-            'Начать', manager=self.ui_manager
+            pygame.Rect((378, 180), (243, 45)),
+            'Начать', manager=self.ui_manager,
+            object_id=ObjectID(object_id='#start_btn', class_id='@game_btn')
         )
 
     def load_image(self, name, colorkey=None):
