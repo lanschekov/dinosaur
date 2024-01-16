@@ -7,7 +7,7 @@ import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
 
-from system import CACTUS_APPEARANCE_EVENT, update_cactus_event
+from system import CACTUS_APPEARANCE_EVENT, update_cactus_event, cancel_cactus_event
 from system import SIZE, WIDTH, FPS
 
 
@@ -126,6 +126,11 @@ class Dino(pygame.sprite.Sprite):
 
 
 class Game:
+    WELCOME_STATE = 0
+    PLAYING_STATE = 1
+    PAUSE_STATE = 2
+    STOP_STATE = 3
+
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE)
@@ -148,33 +153,35 @@ class Game:
         self.tile_group = pygame.sprite.Group()
         self.cactus_group = pygame.sprite.Group()
 
-        self.is_playing = False
+        self.state = None
         self.dino = None
 
-        self.ui_manager = None
-        self.message = None
-        self.start_btn = None
-        self.pause_btn = None
-        self.stop_btn = None
+        self.ui_manager: pygame_gui.UIManager | None = None
+        self.message: pygame_gui.elements.UILabel | None = None
+        self.start_btn: pygame_gui.elements.UIButton | None = None
+        self.pause_btn: pygame_gui.elements.UIButton | None = None
+        self.stop_btn: pygame_gui.elements.UIButton | None = None
 
     def show(self):
-        self.initialize()
+        self.init_welcome()
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-                if self.is_playing:
+                if self.state in (self.WELCOME_STATE, self.PAUSE_STATE):
+                    self.handle_static_event(event)
+                elif self.state == self.PLAYING_STATE:
                     self.handle_play_event(event)
-                else:
+                elif self.state == self.STOP_STATE:
                     self.handle_stop_event(event)
 
                 self.ui_manager.process_events(event)
 
             self.screen.blit(self.bg_image, (0, 0))
 
-            if self.is_playing:
+            if self.state == self.PLAYING_STATE:
                 self.update()
 
             self.tile_group.draw(self.screen)
@@ -188,6 +195,15 @@ class Game:
 
         pygame.quit()
 
+    def handle_static_event(self, event) -> None:
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.start_btn:
+                self.start()
+            elif event.ui_element == self.stop_btn:
+                self.stop()
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            self.start()
+
     def handle_play_event(self, event) -> None:
         if event.type == CACTUS_APPEARANCE_EVENT:
             Cactus(self, self.cactus_group, self.all_sprites)
@@ -196,45 +212,28 @@ class Game:
         if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
             self.dino.start_jumping()
 
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.pause_btn:
+                self.pause()
+            elif event.ui_element == self.stop_btn:
+                self.stop()
+
     def handle_stop_event(self, event) -> None:
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.start_btn:
-                self.restart()
-
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            self.restart()
+                self.reset_sprite_state()
+                self.start()
+            elif event.ui_element == self.stop_btn:
+                # TODO: к результатам (новое окно)
+                pass
 
     def update(self) -> None:
         self.tile_group.update()
         self.cactus_group.update()
         self.dino_group.update()
 
-    def stop(self) -> None:
-        self.is_playing = False
-
-    def start(self) -> None:
-        self.is_playing = True
-        update_cactus_event()
-
-    def restart(self) -> None:
-        self.clear()
-        self.initialize()
-        self.start()
-
-    def clear(self) -> None:
-        for cactus in self.cactus_group:
-            cactus.kill()
-        for tile in self.tile_group:
-            tile.kill()
-        for dino in self.dino_group:
-            dino.kill()
-
-    def initialize(self) -> None:
-        Tile(self, 0, self.tile_group, self.all_sprites)
-        Tile(self, WIDTH // 2, self.tile_group, self.all_sprites)
-
-        self.dino = Dino(self, self.dino_group, self.all_sprites)
-
+    def init_welcome(self) -> None:
+        self.reset_sprite_state()
         self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_window_theme.json')
 
         # App name (logo)
@@ -266,13 +265,60 @@ class Game:
             'Пауза', manager=self.ui_manager,
             object_id=ObjectID(object_id='#pause_btn', class_id='@game_btn')
         )
+        self.pause_btn.disable()
 
         # Stop button
         self.stop_btn = pygame_gui.elements.UIButton(
             pygame.Rect((378, 240), (243, 45)),
-            'Завершить', manager=self.ui_manager,
+            'Сдаться', manager=self.ui_manager,
             object_id=ObjectID(object_id='#stop_btn', class_id='@game_btn')
         )
+        self.stop_btn.disable()
+
+        self.state = self.WELCOME_STATE
+
+    def reset_sprite_state(self):
+        self.remove_sprites()
+        Tile(self, 0, self.tile_group, self.all_sprites)
+        Tile(self, WIDTH // 2, self.tile_group, self.all_sprites)
+        self.dino = Dino(self, self.dino_group, self.all_sprites)
+
+    def start(self) -> None:
+        self.start_btn.disable()
+        self.start_btn.set_text('Продолжить')
+        self.pause_btn.enable()
+        self.stop_btn.set_text('Сдаться')
+        self.stop_btn.enable()
+
+        self.message.set_text('COME ON')
+
+        self.state = self.PLAYING_STATE
+        update_cactus_event()
+
+    def pause(self) -> None:
+        self.pause_btn.disable()
+        self.start_btn.set_text('Продолжить')
+        self.start_btn.enable()
+
+        self.message.set_text('PAUSE')
+
+        self.state = self.PAUSE_STATE
+        cancel_cactus_event()
+
+    def stop(self) -> None:
+        self.start_btn.set_text('Еще раз')
+        self.start_btn.enable()
+        self.pause_btn.disable()
+        self.stop_btn.set_text('К результатам')
+
+        self.message.set_text('LOSS')
+
+        self.state = self.STOP_STATE
+        cancel_cactus_event()
+
+    def remove_sprites(self) -> None:
+        for sprite in self.all_sprites:
+            sprite.kill()
 
     def load_image(self, name, colorkey=None):
         fullname = 'data/' + name

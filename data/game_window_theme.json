@@ -9,11 +9,11 @@
             "normal_text": "#E8E5E5",
             "hovered_text": "#E8E5E5",
             "selected_text": "#E8E5E5",
-            "disabled_text": "#E8E5E5",
+            "disabled_text": "#757575",
             "active_text": "#9AE1FF",
             "normal_border": "#E8E5E5",
             "hovered_border": "#9AE1FF",
-            "disabled_border": "#E8E5E5",
+            "disabled_border": "#757575",
             "selected_border": "#E8E5E5",
             "active_border": "#9AE1FF",
             "normal_text_shadow": "rgba(0, 0, 0, 0)",
@@ -33,7 +33,8 @@
             "border_width": "3",
             "state_transitions": {
                 "normal_hovered": "0.2",
-                "hovered_normal": "0.1"
+                "hovered_normal": "0.1",
+                "disabled_normal": "0.25"
             }
         }
     },

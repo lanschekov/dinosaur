@@ -12,3 +12,7 @@ CACTUS_DELAY = range(100, 2000)
 def update_cactus_event():
     pygame.time.set_timer(CACTUS_APPEARANCE_EVENT,
                           random.choice(CACTUS_DELAY))
+
+
+def cancel_cactus_event():
+    pygame.time.set_timer(CACTUS_APPEARANCE_EVENT, 0)
