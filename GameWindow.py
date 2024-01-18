@@ -8,6 +8,7 @@ import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
 
+from ResultWindow import ResultWindow
 from system import CACTUS_APPEARANCE_EVENT, update_cactus_event, cancel_cactus_event
 from system import SIZE, WIDTH, FPS, LEVEL_SPEED
 
@@ -166,13 +167,16 @@ class Game:
         self.playing_time = 0
         self.result_time = 0
 
+        self.running = False
+        self.result_window: ResultWindow | None = None
+
     def show(self):
         self.init_welcome()
-        running = True
-        while running:
+        self.running = True
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
 
                 if self.state in (self.WELCOME_STATE, self.PAUSE_STATE):
                     self.handle_static_event(event)
@@ -197,6 +201,8 @@ class Game:
 
             pygame.display.flip()
 
+        if self.result_window:
+            self.result_window.show()
         pygame.quit()
 
     def handle_static_event(self, event) -> None:
@@ -228,8 +234,8 @@ class Game:
                 self.reset_sprite_state()
                 self.start()
             elif event.ui_element == self.stop_btn:
-                # TODO: к результатам (новое окно)
-                pass
+                self.running = False
+                self.result_window = ResultWindow(int(self.result_time), self.level)
 
     def update(self) -> None:
         self.tile_group.update()
@@ -250,7 +256,7 @@ class Game:
 
         # Message (at the beginning)
         self.message = pygame_gui.elements.UILabel(
-            pygame.Rect((345, 30), (310, 40)),
+            pygame.Rect((345, 30), (312, 42)),
             text="LET'S GO",
             manager=self.ui_manager,
             object_id=ObjectID(object_id='#message', class_id='@big_text')

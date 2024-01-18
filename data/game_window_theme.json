@@ -59,5 +59,27 @@
             "name": "PorterSansBlock-Regular",
             "size": 40
         }
+    },
+    "#description": {
+        "colours": {
+            "dark_bg": "rgba(0, 0, 0, 0)",
+            "normal_border": "rgba(0, 0, 0, 0)",
+            "normal_text": "#9AE1FF"
+        },
+        "font": {
+            "name": "AnonymousPro-Regular",
+            "size": 25,
+            "regular_path": "data/AnonymousPro-Regular.ttf"
+        },
+        "misc": {
+            "text_horiz_alignment": "center",
+            "text_vert_alignment": "center"
+        }
+    },
+    "#small_logo": {
+        "font": {
+            "name": "PorterSansBlock-Regular",
+            "size": 12
+        }
     }
 }
