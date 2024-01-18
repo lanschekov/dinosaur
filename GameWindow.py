@@ -8,25 +8,24 @@ import pygame_gui
 from pygame_gui.core import ObjectID
 
 from system import CACTUS_APPEARANCE_EVENT, update_cactus_event, cancel_cactus_event
-from system import SIZE, WIDTH, FPS
+from system import SIZE, WIDTH, FPS, LEVEL_SPEED
 
 
 class Tile(pygame.sprite.Sprite):
-    dx = -10
-
-    def __init__(self, game, x: int, *groups):
+    def __init__(self, game, level: int, x: int, *groups):
         super(Tile, self).__init__(*groups)
         self.game = game
         self.image = random.choice(game.tile_images)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, 467
+        self.dx = LEVEL_SPEED[level - 1]
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect = self.rect.move(self.dx, 0)
 
         # If there is an empty space on the right that needs to be filled with tiles
         if self.rect.x < 0 and len(self.game.tile_group) == 2:
-            Tile(self.game, WIDTH + self.rect.x, self.game.tile_group, self.game.all_sprites)
+            Tile(self.game, self.game.level, WIDTH + self.rect.x, self.game.tile_group, self.game.all_sprites)
 
         # If the tile is no longer visible
         if self.rect.right < 0:
@@ -34,14 +33,13 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Cactus(pygame.sprite.Sprite):
-    dx = -10
-
-    def __init__(self, game, *groups):
+    def __init__(self, game, level: int, *groups):
         super(Cactus, self).__init__(*groups)
         self.image = game.cactus_image
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = WIDTH, 385
         self.mask = pygame.mask.from_surface(self.image)
+        self.dx = LEVEL_SPEED[level - 1]
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.rect = self.rect.move(self.dx, 0)
@@ -131,7 +129,7 @@ class Game:
     PAUSE_STATE = 2
     STOP_STATE = 3
 
-    def __init__(self):
+    def __init__(self, level: int):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE)
 
@@ -145,6 +143,7 @@ class Game:
         self.dino_images = [self.load_image('dino_right_up.png'),
                             self.load_image('dino_left_up.png')]
 
+        self.level = level
         self.clock = pygame.time.Clock()
 
         # Sprite groups
@@ -206,7 +205,7 @@ class Game:
 
     def handle_play_event(self, event) -> None:
         if event.type == CACTUS_APPEARANCE_EVENT:
-            Cactus(self, self.cactus_group, self.all_sprites)
+            Cactus(self, self.level, self.cactus_group, self.all_sprites)
             update_cactus_event()
 
         if event.type == pygame.KEYDOWN and event.key in (pygame.K_SPACE, pygame.K_UP):
@@ -279,8 +278,8 @@ class Game:
 
     def reset_sprite_state(self):
         self.remove_sprites()
-        Tile(self, 0, self.tile_group, self.all_sprites)
-        Tile(self, WIDTH // 2, self.tile_group, self.all_sprites)
+        Tile(self, self.level, 0, self.tile_group, self.all_sprites)
+        Tile(self, self.level, WIDTH // 2, self.tile_group, self.all_sprites)
         self.dino = Dino(self, self.dino_group, self.all_sprites)
 
     def start(self) -> None:

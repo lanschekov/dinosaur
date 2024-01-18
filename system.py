@@ -16,3 +16,13 @@ def update_cactus_event():
 
 def cancel_cactus_event():
     pygame.time.set_timer(CACTUS_APPEARANCE_EVENT, 0)
+
+
+LEVEL_SPEED = []
+
+
+def load_level_speed():
+    with open('data/level_speed.txt') as f:
+        LEVEL_SPEED.clear()
+        LEVEL_SPEED.extend([int(speed) for speed in f.readlines()])
+        print(LEVEL_SPEED)
