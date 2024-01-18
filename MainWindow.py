@@ -23,5 +23,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.level_3.mousePressEvent = lambda event: self.start_level(game_level=3)
 
     def start_level(self, game_level: int):
-        load_level_speed()
-        Game(game_level).show()
+        load_level_speed()  # Loading speed values for all levels
+        game = Game(game_level)  # Game window
+        self.close()  # Close main window
+        game.show()
