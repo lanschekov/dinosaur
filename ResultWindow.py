@@ -12,6 +12,7 @@ class ResultWindow:
     def __init__(self, result_time: int, game_level: int):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE)
+        pygame.display.set_caption('Cyber Dino')
 
         self.bg_image = self.load_image('game_bg.png')
         self.clock = pygame.time.Clock()
