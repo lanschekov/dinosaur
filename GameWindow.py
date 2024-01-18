@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 from typing import Any
 
 import pygame
@@ -161,6 +162,10 @@ class Game:
         self.pause_btn: pygame_gui.elements.UIButton | None = None
         self.stop_btn: pygame_gui.elements.UIButton | None = None
 
+        self.start_time = 0
+        self.playing_time = 0
+        self.result_time = 0
+
     def show(self):
         self.init_welcome()
         running = True
@@ -294,7 +299,11 @@ class Game:
         self.state = self.PLAYING_STATE
         update_cactus_event()
 
+        self.start_time = time.time()
+
     def pause(self) -> None:
+        self.update_playing_time()
+
         self.pause_btn.disable()
         self.start_btn.set_text('Продолжить')
         self.start_btn.enable()
@@ -304,7 +313,18 @@ class Game:
         self.state = self.PAUSE_STATE
         cancel_cactus_event()
 
+    def update_playing_time(self):
+        time_point = time.time()
+        self.playing_time += time_point - self.start_time
+        self.start_time = time_point
+
     def stop(self) -> None:
+        if self.state == self.PLAYING_STATE:
+            self.update_playing_time()
+
+        self.result_time = self.playing_time
+        self.playing_time = 0
+
         self.start_btn.set_text('Еще раз')
         self.start_btn.enable()
         self.pause_btn.disable()
