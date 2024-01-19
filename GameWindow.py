@@ -245,7 +245,7 @@ class Game:
 
     def init_welcome(self) -> None:
         self.reset_sprite_state()
-        self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_window_theme.json')
+        self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_theme.json')
 
         # App name (logo)
         pygame_gui.elements.UITextBox(

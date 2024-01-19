@@ -49,7 +49,7 @@ class ResultWindow:
         pygame.quit()
 
     def initialize(self):
-        self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_window_theme.json')
+        self.ui_manager = pygame_gui.UIManager(SIZE, theme_path='data/game_theme.json')
 
         # Message (at the beginning)
         pygame_gui.elements.UILabel(
