@@ -8,7 +8,7 @@ import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
 
-from ResultWindow import ResultWindow
+from structure.ResultWindow import ResultWindow
 from system import CACTUS_APPEARANCE_EVENT, update_cactus_event, cancel_cactus_event
 from system import SIZE, WIDTH, FPS, LEVEL_SPEED
 

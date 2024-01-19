@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication
-from MainWindow import MainWindow
+from structure.MainWindow import MainWindow
 
 
 def except_hook(cls, exception, traceback):

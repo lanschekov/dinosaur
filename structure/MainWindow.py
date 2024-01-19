@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow
 
-from GameWindow import Game
+from structure.GameWindow import Game
 from design.py.main_window_design import Ui_MainWindow
 from system import load_level_speed
 
