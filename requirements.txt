@@ -1,0 +1,5 @@
+pygame==2.5.2
+pygame_ce==2.3.2
+pygame_gui==0.6.9
+PyQt5==5.15.10
+PyQt5_sip==12.13.0
